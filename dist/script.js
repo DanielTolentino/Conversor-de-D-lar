@@ -40,9 +40,9 @@ document.getElementById('resultado-btc').value= "R$" + valorEmBtc.toLocaleString
 
     //exibe a cotação após a conversão
     var divCotacaoHoje = document.getElementById("valor-atual")
-    var htmlDolar = "Dólar:" + valorEmReal
-    var htmlEuro = " Euro:" + valorEmEuro
-    var htmlBitcoin = " BTC:" + valorEmBtc
+    var htmlDolar = "Dólar:" + dolarHoje
+    var htmlEuro = " Euro:" + eurHoje
+    var htmlBitcoin = " BTC:" + btcHoje
   
     divCotacaoHoje.innerHTML = htmlDolar + htmlEuro + htmlBitcoin 
 }
