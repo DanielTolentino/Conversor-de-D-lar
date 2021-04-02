@@ -1,5 +1,5 @@
 body {
-  font-family: 'Roboto Mono',monospace;
+  font-family: 'Roboto Mono',monospace, 'FontAwesome';
   min-height: 400px;
 	width: 100%;  
   background-image: url('https://images.unsplash.com/photo-1502920514313-52581002a659?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1047&q=80');
@@ -25,6 +25,20 @@ body {
   color: #ffffff;
   margin-top: 5px;
 	text-shadow: 2px 2px 4px #000000
+}
+
+.valor-atual {
+  background-color: burlywood;
+  color: #ffffff;
+  margin-top: 5px;
+	text-shadow: 2px 2px 4px #000000
+}
+
+h2 {
+  color: #ffffff;
+  margin: 0 0 5px;
+	text-shadow: 2px 2px 4px #000000
+
 }
 
 .page-logo {
@@ -57,7 +71,7 @@ body {
   margin-left: auto;
 }
 
-.resultado{
+.resultado-dolar{
 	color: white;
 	width: 30%;
   padding: 12px 20px;
@@ -72,11 +86,50 @@ body {
   margin-left: auto;
 	background-color: #BF3124;
 }
+.resultado-dolar::placeholder {
+  color: black;
+}
 
+.resultado-euro{
+	color: white;
+	width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 3px solid #ccc;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+	display: block;
+  margin-right: auto;
+  margin-left: auto;
+	background-color: #BF3124;
+}
+.resultado-euro::placeholder {
+  color: black;
+}
+.resultado-btc{
+	color: white;
+	width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 3px solid #ccc;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+	display: block;
+  margin-right: auto;
+  margin-left: auto;
+	background-color: #BF3124;
+}
+.resultado-btc::placeholder {
+  color: black;
+}
 .botao{
   color:white;
 	font-size: 24px;
-  font-family:'FontAwesome'; 
+  font-family: 'Roboto Mono',monospace, 'FontAwesome'; 
 	margin: 5px;
 	border-radius: 8px;
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);

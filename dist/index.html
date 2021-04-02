@@ -19,17 +19,24 @@
   <body>
 			<div class="container">
       <h1 class="page-title">
-        Conversor de moedas
+        Conversor de moedas 
       </h1>
       <p class="page-subtitle">
-        Descubra os valores em dolar U$
+        Descubra os valores em dólar, euro, ou bitcoin
       </p>
+      <div id="valor-atual" class="valor-atual"></div>
 				<p>	<input type="number" id = "entrada" class="entrada" placeholder = "Digite aqui o valor desejado">
 				</input>
 		</p>
-	<p>	<input type="text" id = "resultado" class = "resultado" disabled = "disabled"> 
+	<p ><h2>Dólar &#xf155	</h2><input type="text" id = "resultado-dolar" class = "resultado-dolar" placeholder = "Conversão de Dólar para Reais" disabled = "disabled"> 
 				</input>
 		</p>
+    <p ><h2>Euro &#xf153</h2><input type="text" id = "resultado-euro" class = "resultado-euro" placeholder = "Conversão de Euro para Reais" disabled = "disabled"> 
+    </input>
+    <p>	<h2>Bitcoin &#xf15a</h2><input type="text" id = "resultado-btc" class = "resultado-btc" placeholder = "Conversão de Bitcoin para Reais" disabled = "disabled"> 
+    </input>
+</p>
+</p>
 	<div>
     <!-- Chama a função de Converter no JavaScript e executa a conversão. Adciona o ícone de dólar do fontawsome -->
 	<input type ="submit" class = botao onclick="converter()" value="Converter &#xf155">
