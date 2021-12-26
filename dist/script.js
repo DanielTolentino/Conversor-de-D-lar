@@ -37,7 +37,12 @@ document.getElementById('resultado-dolar').value= "R$" + valorEmReal.toLocaleStr
 var valorEmEuro =  
 document.getElementById('resultado-euro').value= "R$" + valorEmEuro.toLocaleString({style: 'currency', currency: 'BRL'}, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 var valorEmBtc =  
-document.getElementById('resultado-btc').value= "R$" + valorEmBtc.toLocaleString({style: 'currency', currency: 'USD'}, {minimumFractionDigits: 6, maximumFractionDigits: 4});
+document.getElementById('resultado-btc').value= "R$" + valorEmBtc.InitFraction.toLocaleString('az-AE', {     
+  style: 'currency',     
+  currency: 'AED',     
+  currencyDisplay: 'code',    
+  maximumFractionDigits: 5,     
+  minimumFractionDigits: 2}), 
 
     //exibe a cotação em valor unitário de 1(um) no topo da página após a conversão
     var divCotacaoHoje = document.getElementById("valor-atual")
