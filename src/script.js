@@ -70,13 +70,6 @@ const CurrencyConverter = {
     return `${config.symbol} ${value.toFixed(config.decimals)}`;
   },
   
-  parseCurrencyInput(value, currencyCode) {
-    // Remove currency symbols and parse
-    if (!value) return 0;
-    const cleanValue = value.toString().replace(/[^0-9.-]/g, '');
-    return parseFloat(cleanValue) || 0;
-  },
-  
   formatBRL(value) {
     if (!value || isNaN(value)) return '--';
     return `R$ ${value.toFixed(2)}`;
@@ -87,6 +80,19 @@ const CurrencyConverter = {
 // UI Controller Module
 // ============================================
 const UIController = {
+  // Currency code to element ID mapping
+  currencyElementMap: {
+    'USD': 'resultDolar',
+    'EUR': 'resultEuro',
+    'BTC': 'resultBtc'
+  },
+  
+  currencyDecimals: {
+    'USD': 2,
+    'EUR': 2,
+    'BTC': 8
+  },
+  
   elements: {
     loading: document.getElementById('loading'),
     errorMessage: document.getElementById('error-message'),
@@ -206,21 +212,20 @@ const UIController = {
     
     // Update other currency fields
     const otherCurrencies = {
-      'USD': ['resultDolar', 'EUR', 'BTC'],
-      'EUR': ['resultEuro', 'USD', 'BTC'],
-      'BTC': ['resultBtc', 'USD', 'EUR']
+      'USD': ['EUR', 'BTC'],
+      'EUR': ['USD', 'BTC'],
+      'BTC': ['USD', 'EUR']
     };
     
-    const [currentField, ...others] = otherCurrencies[currencyCode];
+    const others = otherCurrencies[currencyCode];
     
     others.forEach(otherCode => {
       const otherAmount = CurrencyConverter.convert(brlAmount, rates[otherCode]);
-      const elementId = otherCode === 'USD' ? 'resultDolar' : 
-                       otherCode === 'EUR' ? 'resultEuro' : 'resultBtc';
+      const elementId = this.currencyElementMap[otherCode];
       const element = this.elements[elementId];
       
       if (element) {
-        const decimals = otherCode === 'BTC' ? 8 : 2;
+        const decimals = this.currencyDecimals[otherCode];
         element.value = otherAmount.toFixed(decimals);
       }
     });
@@ -266,6 +271,7 @@ const UIController = {
 const App = {
   debounceTimer: null,
   debounceDelay: 500, // milliseconds
+  MAX_CONVERSION_AMOUNT: 999999999,
   
   async init() {
     console.log('Iniciando conversor de moedas...');
@@ -368,7 +374,7 @@ const App = {
       return;
     }
     
-    if (amount > 999999999) {
+    if (amount > this.MAX_CONVERSION_AMOUNT) {
       UIController.showError('Valor muito grande. Digite um valor menor.');
       UIController.clearResults();
       return;
@@ -402,7 +408,7 @@ const App = {
       return;
     }
     
-    if (amount > 999999999) {
+    if (amount > this.MAX_CONVERSION_AMOUNT) {
       UIController.showError('Valor muito grande. Digite um valor menor.');
       UIController.hideBRLResult();
       return;
