@@ -1,55 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Conversor de moedas</title>
-  <!-- Add icon library -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="./src/style.css">
-
 </head>
 <body>
-<!-- partial:index.partial.html -->
-<html>
-  <head>
-    <title>
-      Imersão Dev - Aula 01
-    </title>
-  </head>
-  <body>
-			<div class="container">
-      <h1 class="page-title">
-        Conversor de moedas 
-      </h1>
-      <p class="page-subtitle">
-        Descubra os valores em dólar, euro, ou bitcoin
-      </p>
-      <div id="valor-atual" class="valor-atual"></div>
-				<p>	<input type="number" id = "entrada" class="entrada" placeholder = "Digite aqui o valor desejado">
-				</input>
-		</p>
-	<p ><h2>&#xf155 Dólar</h2><input type="text" id = "resultado-dolar" class = "resultado-dolar" placeholder = "Conversão de Dólar para Reais" disabled = "disabled"> 
-				</input>
-		</p>
-    <p ><h2>&#xf153 Euro</h2><input type="text" id = "resultado-euro" class = "resultado-euro" placeholder = "Conversão de Euro para Reais" disabled = "disabled"> 
-    </input>
-    <p>	<h2>&#xf15a Bitcoin</h2><input type="text" id = "resultado-btc" class = "resultado-btc" placeholder = "Conversão de Bitcoin para Reais" disabled = "disabled"> 
-    </input>
-</p>
-</p>
-	<div>
-    <!-- Chama a função de Converter no JavaScript e executa a conversão. Adciona o ícone de dólar do fontawsome -->
-	<input type ="submit" class = botao onclick="converter()" value="Converter &#xf155">
-	</div>
-      <img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/logo-imersao-conversor-de-moedas.svg" class="page-logo" alt="">
-    </div>
-      <a href="https://alura.com.br/" target="_blank">
-        <img src="https://www.alura.com.br/assets/img/home/alura-logo.svg" alt="" class="alura-logo">
-        </a>
-  </body>
-</html>
-<!-- partial -->
-  <script  src="./src/script.js"></script>
+  <div class="container">
+    <header class="converter-header">
+      <img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/logo-imersao-conversor-de-moedas.svg" class="page-logo" alt="Logo do Conversor">
+      <h1 class="page-title">Conversor de moedas</h1>
+      <p class="page-subtitle">Conversões em tempo real com API</p>
+    </header>
 
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Atualizando cotações...</p>
+    </div>
+
+    <div id="error-message" class="error-message hidden"></div>
+
+    <section class="input-section">
+      <label for="entrada">Valor em Reais (BRL) a converter</label>
+      <div class="input-wrapper">
+        <span class="currency-symbol">R$</span>
+        <input 
+          type="number" 
+          id="entrada" 
+          class="entrada" 
+          placeholder="100.00"
+          aria-label="Valor a ser convertido"
+          aria-describedby="input-help"
+          min="0"
+          step="0.01"
+        >
+      </div>
+      <small id="input-help" class="helper-text">Digite o valor em reais que será convertido para outras moedas</small>
+    </section>
+
+    <div id="valor-atual" class="valor-atual"></div>
+
+    <section class="results-section">
+      <article class="currency-card" data-currency="usd">
+        <div class="card-header">
+          <i class="fas fa-dollar-sign currency-icon"></i>
+          <h2>Dólar (USD)</h2>
+        </div>
+        <div class="exchange-rate" id="rate-usd">Cotação: --</div>
+        <input 
+          type="text" 
+          id="resultado-dolar" 
+          class="resultado" 
+          placeholder="Resultado em Dólares"
+          readonly
+          aria-label="Resultado da conversão em dólares"
+        >
+      </article>
+
+      <article class="currency-card" data-currency="eur">
+        <div class="card-header">
+          <i class="fas fa-euro-sign currency-icon"></i>
+          <h2>Euro (EUR)</h2>
+        </div>
+        <div class="exchange-rate" id="rate-eur">Cotação: --</div>
+        <input 
+          type="text" 
+          id="resultado-euro" 
+          class="resultado" 
+          placeholder="Resultado em Euros"
+          readonly
+          aria-label="Resultado da conversão em euros"
+        >
+      </article>
+
+      <article class="currency-card" data-currency="btc">
+        <div class="card-header">
+          <i class="fab fa-bitcoin currency-icon"></i>
+          <h2>Bitcoin (BTC)</h2>
+        </div>
+        <div class="exchange-rate" id="rate-btc">Cotação: --</div>
+        <input 
+          type="text" 
+          id="resultado-btc" 
+          class="resultado" 
+          placeholder="Resultado em Bitcoin"
+          readonly
+          aria-label="Resultado da conversão em bitcoin"
+        >
+      </article>
+    </section>
+
+    <footer class="converter-footer">
+      <a href="https://alura.com.br/" target="_blank" rel="noopener noreferrer">
+        <img src="https://www.alura.com.br/assets/img/home/alura-logo.svg" alt="Logo Alura" class="alura-logo">
+      </a>
+    </footer>
+  </div>
+
+  <script src="./src/script.js"></script>
 </body>
 </html>
