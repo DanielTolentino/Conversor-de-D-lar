@@ -238,11 +238,6 @@ const App = {
 // ============================================
 // Initialize Application
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  App.init();
-});
-
-// Also initialize if DOM is already loaded (for dynamic scripts)
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => App.init());
 } else {
