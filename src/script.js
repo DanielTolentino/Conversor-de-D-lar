@@ -51,6 +51,11 @@ const CurrencyConverter = {
     return amount / rate;
   },
   
+  convertToBRL(amount, rate) {
+    if (!amount || amount <= 0) return 0;
+    return amount * rate;
+  },
+  
   formatCurrency(value, currencyCode) {
     if (!value || isNaN(value)) return '--';
     
@@ -63,6 +68,13 @@ const CurrencyConverter = {
     const config = formatOptions[currencyCode] || { symbol: '', decimals: 2 };
     
     return `${config.symbol} ${value.toFixed(config.decimals)}`;
+  },
+  
+  parseCurrencyInput(value, currencyCode) {
+    // Remove currency symbols and parse
+    if (!value) return 0;
+    const cleanValue = value.toString().replace(/[^0-9.-]/g, '');
+    return parseFloat(cleanValue) || 0;
   },
   
   formatBRL(value) {
@@ -80,6 +92,8 @@ const UIController = {
     errorMessage: document.getElementById('error-message'),
     inputField: document.getElementById('entrada'),
     currentRates: document.getElementById('valor-atual'),
+    brlResult: document.getElementById('brl-result'),
+    brlResultValue: document.getElementById('brl-result-value'),
     resultDolar: document.getElementById('resultado-dolar'),
     resultEuro: document.getElementById('resultado-euro'),
     resultBtc: document.getElementById('resultado-btc'),
@@ -87,6 +101,8 @@ const UIController = {
     rateEuro: document.getElementById('rate-eur'),
     rateBtc: document.getElementById('rate-btc')
   },
+  
+  isUpdating: false, // Flag to prevent circular updates
   
   showLoading(show) {
     if (this.elements.loading) {
@@ -137,8 +153,12 @@ const UIController = {
   displayResults(amount, rates) {
     if (!amount || amount <= 0) {
       this.clearResults();
+      this.hideBRLResult();
       return;
     }
+    
+    if (this.isUpdating) return;
+    this.isUpdating = true;
     
     // Convert BRL to other currencies
     const dollarAmount = CurrencyConverter.convert(amount, rates.USD);
@@ -147,20 +167,91 @@ const UIController = {
     
     // Display formatted results
     if (this.elements.resultDolar) {
-      this.elements.resultDolar.value = CurrencyConverter.formatCurrency(dollarAmount, 'USD');
+      this.elements.resultDolar.value = dollarAmount.toFixed(2);
     }
     if (this.elements.resultEuro) {
-      this.elements.resultEuro.value = CurrencyConverter.formatCurrency(euroAmount, 'EUR');
+      this.elements.resultEuro.value = euroAmount.toFixed(2);
     }
     if (this.elements.resultBtc) {
-      this.elements.resultBtc.value = CurrencyConverter.formatCurrency(btcAmount, 'BTC');
+      this.elements.resultBtc.value = btcAmount.toFixed(8);
+    }
+    
+    this.hideBRLResult();
+    this.isUpdating = false;
+  },
+  
+  displayBRLResult(currencyAmount, currencyCode, rates) {
+    if (!currencyAmount || currencyAmount <= 0) {
+      this.hideBRLResult();
+      this.clearBRLInput();
+      return;
+    }
+    
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+    
+    const rate = rates[currencyCode];
+    const brlAmount = CurrencyConverter.convertToBRL(currencyAmount, rate);
+    
+    // Update BRL input field
+    if (this.elements.inputField) {
+      this.elements.inputField.value = brlAmount.toFixed(2);
+    }
+    
+    // Show BRL result display
+    if (this.elements.brlResult && this.elements.brlResultValue) {
+      this.elements.brlResultValue.textContent = CurrencyConverter.formatBRL(brlAmount);
+      this.elements.brlResult.classList.remove('hidden');
+    }
+    
+    // Update other currency fields
+    const otherCurrencies = {
+      'USD': ['resultDolar', 'EUR', 'BTC'],
+      'EUR': ['resultEuro', 'USD', 'BTC'],
+      'BTC': ['resultBtc', 'USD', 'EUR']
+    };
+    
+    const [currentField, ...others] = otherCurrencies[currencyCode];
+    
+    others.forEach(otherCode => {
+      const otherAmount = CurrencyConverter.convert(brlAmount, rates[otherCode]);
+      const elementId = otherCode === 'USD' ? 'resultDolar' : 
+                       otherCode === 'EUR' ? 'resultEuro' : 'resultBtc';
+      const element = this.elements[elementId];
+      
+      if (element) {
+        const decimals = otherCode === 'BTC' ? 8 : 2;
+        element.value = otherAmount.toFixed(decimals);
+      }
+    });
+    
+    this.isUpdating = false;
+  },
+  
+  hideBRLResult() {
+    if (this.elements.brlResult) {
+      this.elements.brlResult.classList.add('hidden');
     }
   },
   
   clearResults() {
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+    
     if (this.elements.resultDolar) this.elements.resultDolar.value = '';
     if (this.elements.resultEuro) this.elements.resultEuro.value = '';
     if (this.elements.resultBtc) this.elements.resultBtc.value = '';
+    
+    this.isUpdating = false;
+  },
+  
+  clearBRLInput() {
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+    
+    if (this.elements.inputField) this.elements.inputField.value = '';
+    
+    this.isUpdating = false;
   },
   
   getInputValue() {
@@ -195,7 +286,11 @@ const App = {
   
   setupEventListeners() {
     const inputField = UIController.elements.inputField;
+    const resultDolar = UIController.elements.resultDolar;
+    const resultEuro = UIController.elements.resultEuro;
+    const resultBtc = UIController.elements.resultBtc;
     
+    // BRL to currencies conversion
     if (inputField) {
       // Real-time conversion with debounce
       inputField.addEventListener('input', () => {
@@ -210,6 +305,55 @@ const App = {
         if (e.key === 'Enter') {
           clearTimeout(this.debounceTimer);
           this.handleConversion();
+        }
+      });
+    }
+    
+    // Currency to BRL conversions
+    if (resultDolar) {
+      resultDolar.addEventListener('input', () => {
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+          this.handleReverseConversion('USD');
+        }, this.debounceDelay);
+      });
+      
+      resultDolar.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          clearTimeout(this.debounceTimer);
+          this.handleReverseConversion('USD');
+        }
+      });
+    }
+    
+    if (resultEuro) {
+      resultEuro.addEventListener('input', () => {
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+          this.handleReverseConversion('EUR');
+        }, this.debounceDelay);
+      });
+      
+      resultEuro.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          clearTimeout(this.debounceTimer);
+          this.handleReverseConversion('EUR');
+        }
+      });
+    }
+    
+    if (resultBtc) {
+      resultBtc.addEventListener('input', () => {
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+          this.handleReverseConversion('BTC');
+        }, this.debounceDelay);
+      });
+      
+      resultBtc.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          clearTimeout(this.debounceTimer);
+          this.handleReverseConversion('BTC');
         }
       });
     }
@@ -232,6 +376,40 @@ const App = {
     
     UIController.hideError();
     UIController.displayResults(amount, CurrencyAPI.rates);
+  },
+  
+  handleReverseConversion(currencyCode) {
+    const elementMap = {
+      'USD': UIController.elements.resultDolar,
+      'EUR': UIController.elements.resultEuro,
+      'BTC': UIController.elements.resultBtc
+    };
+    
+    const element = elementMap[currencyCode];
+    if (!element) return;
+    
+    const amount = parseFloat(element.value);
+    
+    if (!amount || isNaN(amount)) {
+      UIController.hideBRLResult();
+      UIController.clearBRLInput();
+      return;
+    }
+    
+    if (amount < 0) {
+      UIController.showError('Por favor, digite um valor positivo.');
+      UIController.hideBRLResult();
+      return;
+    }
+    
+    if (amount > 999999999) {
+      UIController.showError('Valor muito grande. Digite um valor menor.');
+      UIController.hideBRLResult();
+      return;
+    }
+    
+    UIController.hideError();
+    UIController.displayBRLResult(amount, currencyCode, CurrencyAPI.rates);
   }
 };
 

@@ -42,6 +42,11 @@
 
     <div id="valor-atual" class="valor-atual"></div>
 
+    <div id="brl-result" class="brl-result hidden">
+      <div class="brl-result-label">Resultado em Reais (BRL)</div>
+      <div id="brl-result-value" class="brl-result-value">R$ 0,00</div>
+    </div>
+
     <section class="results-section">
       <article class="currency-card" data-currency="usd">
         <div class="card-header">
@@ -50,12 +55,13 @@
         </div>
         <div class="exchange-rate" id="rate-usd">Cotação: --</div>
         <input 
-          type="text" 
+          type="number" 
           id="resultado-dolar" 
           class="resultado" 
-          placeholder="Resultado em Dólares"
-          readonly
-          aria-label="Resultado da conversão em dólares"
+          placeholder="Digite em Dólares"
+          aria-label="Valor em dólares para conversão"
+          min="0"
+          step="0.01"
         >
       </article>
 
@@ -66,12 +72,13 @@
         </div>
         <div class="exchange-rate" id="rate-eur">Cotação: --</div>
         <input 
-          type="text" 
+          type="number" 
           id="resultado-euro" 
           class="resultado" 
-          placeholder="Resultado em Euros"
-          readonly
-          aria-label="Resultado da conversão em euros"
+          placeholder="Digite em Euros"
+          aria-label="Valor em euros para conversão"
+          min="0"
+          step="0.01"
         >
       </article>
 
@@ -82,12 +89,13 @@
         </div>
         <div class="exchange-rate" id="rate-btc">Cotação: --</div>
         <input 
-          type="text" 
+          type="number" 
           id="resultado-btc" 
           class="resultado" 
-          placeholder="Resultado em Bitcoin"
-          readonly
-          aria-label="Resultado da conversão em bitcoin"
+          placeholder="Digite em Bitcoin"
+          aria-label="Valor em bitcoin para conversão"
+          min="0"
+          step="0.00000001"
         >
       </article>
     </section>
