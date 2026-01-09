@@ -67,12 +67,25 @@ const CurrencyConverter = {
     
     const config = formatOptions[currencyCode] || { symbol: '', decimals: 2 };
     
-    return `${config.symbol} ${value.toFixed(config.decimals)}`;
+    // Format with Brazilian decimal notation (comma as decimal separator)
+    const formattedValue = value.toLocaleString('pt-BR', {
+      minimumFractionDigits: config.decimals,
+      maximumFractionDigits: config.decimals
+    });
+    
+    return `${config.symbol} ${formattedValue}`;
   },
   
   formatBRL(value) {
     if (!value || isNaN(value)) return '--';
-    return `R$ ${value.toFixed(2)}`;
+    
+    // Format with Brazilian decimal notation (comma as decimal separator)
+    const formattedValue = value.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    return `R$ ${formattedValue}`;
   }
 };
 
@@ -171,15 +184,24 @@ const UIController = {
     const euroAmount = CurrencyConverter.convert(amount, rates.EUR);
     const btcAmount = CurrencyConverter.convert(amount, rates.BTC);
     
-    // Display formatted results
+    // Display formatted results with Brazilian decimal notation
     if (this.elements.resultDolar) {
-      this.elements.resultDolar.value = dollarAmount.toFixed(2);
+      this.elements.resultDolar.value = dollarAmount.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).replace('.', ',');
     }
     if (this.elements.resultEuro) {
-      this.elements.resultEuro.value = euroAmount.toFixed(2);
+      this.elements.resultEuro.value = euroAmount.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).replace('.', ',');
     }
     if (this.elements.resultBtc) {
-      this.elements.resultBtc.value = btcAmount.toFixed(8);
+      this.elements.resultBtc.value = btcAmount.toLocaleString('pt-BR', {
+        minimumFractionDigits: 8,
+        maximumFractionDigits: 8
+      }).replace('.', ',');
     }
     
     this.hideBRLResult();
@@ -199,9 +221,12 @@ const UIController = {
     const rate = rates[currencyCode];
     const brlAmount = CurrencyConverter.convertToBRL(currencyAmount, rate);
     
-    // Update BRL input field
+    // Update BRL input field with Brazilian decimal notation
     if (this.elements.inputField) {
-      this.elements.inputField.value = brlAmount.toFixed(2);
+      this.elements.inputField.value = brlAmount.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).replace('.', ',');
     }
     
     // Show BRL result display
@@ -226,7 +251,10 @@ const UIController = {
       
       if (element) {
         const decimals = this.currencyDecimals[otherCode];
-        element.value = otherAmount.toFixed(decimals);
+        element.value = otherAmount.toLocaleString('pt-BR', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        }).replace('.', ',');
       }
     });
     
@@ -260,7 +288,10 @@ const UIController = {
   },
   
   getInputValue() {
-    const value = parseFloat(this.elements.inputField.value);
+    let valueStr = this.elements.inputField.value;
+    // Convert Brazilian format (comma) to standard format (period) for parsing
+    valueStr = valueStr.replace(/\./g, '').replace(',', '.');
+    const value = parseFloat(valueStr);
     return isNaN(value) ? 0 : value;
   }
 };
@@ -394,7 +425,10 @@ const App = {
     const element = elementMap[currencyCode];
     if (!element) return;
     
-    const amount = parseFloat(element.value);
+    // Parse Brazilian format (comma as decimal separator)
+    let valueStr = element.value;
+    valueStr = valueStr.replace(/\./g, '').replace(',', '.');
+    const amount = parseFloat(valueStr);
     
     if (!amount || isNaN(amount)) {
       UIController.hideBRLResult();
