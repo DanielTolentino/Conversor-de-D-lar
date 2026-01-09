@@ -33,9 +33,9 @@ Fornecer uma ferramenta simples e intuitiva para conversão de moedas com dados 
 7. **Informação de cotação atual mal posicionada** - Aparece em um bloco "burlywood" sem estilo adequado
 
 #### Problemas de Código:
-1. **HTML duplicado** - Tags `<html>` e `<body>` duplicadas
-2. **Estrutura HTML incorreta** - Tags `<p>` e `<h2>` mal aninhadas
-3. **JavaScript com variáveis globais** - Falta de organização e encapsulamento
+1. **HTML duplicado** - Tags `<html>` e `<body>` duplicadas (linhas 1-2 e 13-19 em index.html)
+2. **Estrutura HTML incorreta** - Tags `<p>` e `<h2>` mal aninhadas (linhas 31-38 em index.html)
+3. **JavaScript com variáveis globais** - Falta de organização e encapsulamento (src/script.js)
 4. **Tratamento de erros limitado** - Apenas console.error sem feedback ao usuário
 5. **Validação de input inadequada** - Não valida números negativos ou valores muito grandes
 6. **Código CSS repetitivo** - Classes com estilos duplicados
@@ -64,10 +64,13 @@ Fornecer uma ferramenta simples e intuitiva para conversão de moedas com dados 
   .container {
     padding: 10px;
   }
-  .entrada, .resultado {
+  .entrada, .resultado-dolar, .resultado-euro, .resultado-btc {
     width: 90%;
   }
 }
+
+/* Nota: As classes duplicadas (.resultado-dolar, .resultado-euro, .resultado-btc)
+   devem ser consolidadas em uma única classe .resultado para reduzir repetição */
 ```
 
 #### 3.1.2 Sistema de Cores Melhorado
@@ -181,10 +184,18 @@ const CurrencyConverter = {
 
 // Módulo de UI
 const UIController = {
-  updateRates: (rates) => { ... },
-  displayResult: (currency, result) => { ... },
-  showError: (message) => { ... },
-  showLoading: (show) => { ... }
+  updateRates: (rates) => { 
+    // Atualiza a exibição das cotações atuais
+  },
+  displayResult: (currency, result) => { 
+    // Exibe o resultado da conversão
+  },
+  showError: (message) => { 
+    // Mostra mensagem de erro ao usuário
+  },
+  showLoading: (show) => { 
+    // Controla indicador de carregamento
+  }
 }
 
 // Inicialização
@@ -203,17 +214,20 @@ const App = {
   </header>
   
   <section class="input-section">
-    <label for="amount-input">Valor em BRL</label>
-    <input id="amount-input" type="number" />
+    <label for="amount-input">Valor em BRL (Reais) a converter</label>
+    <input id="amount-input" type="number" placeholder="Ex: 100.00" />
+    <small>Digite o valor em reais que será convertido para outras moedas</small>
   </section>
   
   <section class="results-section">
     <article class="currency-card" data-currency="usd">
-      <!-- Card de conversão -->
+      <!-- Card mostrando o equivalente em outras moedas -->
     </article>
   </section>
 </main>
 ```
+
+**Nota:** A aplicação converte **DE** Real (BRL) **PARA** outras moedas (USD, EUR, BTC), conforme a implementação atual.
 
 #### 3.3.3 CSS com Variáveis
 ```css
@@ -446,5 +460,4 @@ O foco principal está em:
 
 **Documento criado em:** 09/01/2026  
 **Versão:** 1.0  
-**Autor:** GitHub Copilot Agent  
 **Status:** Proposta para Revisão
